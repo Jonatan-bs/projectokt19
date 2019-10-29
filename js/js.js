@@ -21,10 +21,11 @@ function init() {
     let width = shapeDiv.dataset.width;
     let height = shapeDiv.dataset.height;
     let depth = shapeDiv.dataset.depth;
+    let label = shapeDiv.dataset.label;
     let id = shapeDiv.id;
 
     let shapeObj = Object.create(Rectangle)
-    shapeObj.init(id, kitchenCan.context, 0, 0, width, height, depth, shapeDiv, false, "orange")
+    shapeObj.init(id, kitchenCan.context, 0, 0, width, height, depth, shapeDiv, false, "orange",label)
 
     //ADD TO SHAPE ARRAY IN CANVAS
     kitchenCan.allShapes.push(shapeObj)
@@ -51,10 +52,12 @@ function init() {
   //kitchenCan.canvas.addEventListener('click', hittest)
   kitchenCan.canvas.addEventListener('click', addShape)
   kitchenCan.canvas.addEventListener('mouseout', function(){kitchenCan.redraw();})
-
+kitchenCan.canvas.addEventListener('mousemove', infolabel)
 
   //RESIZE BUTTON
   document.getElementById('reset').addEventListener('click', function(){resetResize(shapeObj)})
+  //RESIZE BUTTON
+  document.getElementById('orderInfo').addEventListener('click', function(){orderInfo();})
 }
 window.addEventListener('load', init)
 
@@ -64,7 +67,9 @@ function resetResize(circle){
   let canLength = document.getElementById('canLength').value *100
   let canWidth = document.getElementById('canWidth').value * 100
 
-  console.log(canLength);
+  canArr[0].allShapes.forEach(function(shape){
+    shape.active = false;
+  })
   canArr[0].canvas.height = canLength;
   canArr[0].canvas.width = canWidth;
   canArr[0].drawnShapes = []
@@ -77,8 +82,66 @@ function resetResize(circle){
   circle.y = 0;
   addShape();
   canArr[0].redraw();
-  console.log(circle);
 
+
+}
+
+// GET ORDER INFO AND RESET
+function orderInfo(){
+  canArr[0].drawnShapes.forEach(function(elm){
+    if (elm.type!=='circle') {
+
+    console.log(elm);
+    }
+
+  })
+
+}
+
+// SHOW INFO ON HOVER
+function infolabel(ev){
+  let drawnShapes = canArr[0].drawnShapes
+
+  for (let i = 0; i < drawnShapes.length; i++) {
+    let cx = drawnShapes[i].ctx;
+    if (drawnShapes[i].type === "rectangle") {
+      cx.beginPath();
+      if (!drawnShapes[i].rotate) {
+        cx.rect(drawnShapes[i].x, drawnShapes[i].y, drawnShapes[i].width, drawnShapes[i].height);
+      } else {
+        cx.rect(drawnShapes[i].x, drawnShapes[i].y, drawnShapes[i].height, drawnShapes[i].width);
+      };
+      cx.closePath()
+    } else if (drawnShapes[i].type === "circle") {
+      cx.beginPath();
+      cx.arc(drawnShapes[i].x, drawnShapes[i].y, drawnShapes[i].radius, drawnShapes[i].sAngle, drawnShapes[i].eAngle, drawnShapes[i].clock);
+      cx.closePath()
+    }
+
+    let bb = this.getBoundingClientRect(); // canvas size and pos
+    // mouse to canvas coordinates
+    let x = (ev.clientX - bb.left) * (this.width / bb.width);
+    let y = (ev.clientY - bb.top) * (this.height / bb.height);
+    if (cx.isPointInPath(x, y)) {
+
+      let shape = drawnShapes[i]
+      if (shape.div) {
+        shape.div.classList.add('active')
+      }
+      document.getElementById('label').querySelector('p').innerHTML=shape.label;
+      document.getElementById('label').style.display = 'block';
+      canArr[0].canvas.style.cursor = 'pointer';
+      return
+} else {
+  document.querySelectorAll('.shape.active').forEach(function(div) {
+    div.classList.remove("active")
+  })
+  canArr[0].canvas.style.cursor = 'default';
+  document.getElementById('label').querySelector('p').innerHTML="";
+  document.getElementById('label').style.display = 'none';
+
+}
+}
 }
 
 
@@ -125,14 +188,14 @@ function makeActive(shapeDiv, shapeObj, canvasObj, hoverFunc) {
 ///////////////////
 
 
-function removeActive(canvasObj) {
-  canvasObj.canvas.addEventListener('click', hittest)
+function removeActive() {
+  canArr[0].canvas.addEventListener('click', hittest)
   // IF ANY shapeDIV HAS CLASS ACTIVE, REMOVE CLASS
   document.querySelectorAll('.shape.active').forEach(function(div) {
     div.classList.remove("active")
   })
   // IF ANY shapeOBJ IS ACTIVE, REMOVE ACTIVE
-  canvasObj.allShapes.forEach(function(shape) {
+  canArr[0].allShapes.forEach(function(shape) {
     shape.active = false;
   });
 }
@@ -143,10 +206,14 @@ function removeActive(canvasObj) {
 ///////////////////
 
 function hovershape(ev) {
-
+canArr[0].canvas.style.cursor = 'move';
   canArr[0].allShapes.forEach(function(shape) {
     if (shape.active) {
       //CLEAR CANVAS
+      if (shape.div) {
+        shape.div.classList.add('active')
+      }
+
       canArr[0].redraw()
 
       // canvas size and pos
@@ -229,7 +296,7 @@ for (let i = 0; i < canArr[0].allShapes.length; i++) {
 
     } else {
       addNewShape = Object.create(Rectangle)
-      addNewShape.init(shape.id, shape.ctx, shape.x, shape.y, shape.width, shape.height, shape.depth, shape.div, shape.rotate, "green")
+      addNewShape.init(shape.id, shape.ctx, shape.x, shape.y, shape.width, shape.height, shape.depth, shape.div, shape.rotate, "green",shape.label)
       addNewShape.wall = shape.wall;
       x = shape.x;
       y = shape.y;
@@ -510,7 +577,11 @@ let hittest = function(ev) {
     let cx = drawnShapes[i].ctx;
     if (drawnShapes[i].type === "rectangle") {
       cx.beginPath();
-      cx.rect(drawnShapes[i].x, drawnShapes[i].y, drawnShapes[i].width, drawnShapes[i].height);
+      if (!drawnShapes[i].rotate) {
+        cx.rect(drawnShapes[i].x, drawnShapes[i].y, drawnShapes[i].width, drawnShapes[i].height);
+      } else {
+        cx.rect(drawnShapes[i].x, drawnShapes[i].y, drawnShapes[i].height, drawnShapes[i].width);
+      };
       cx.closePath()
     } else if (drawnShapes[i].type === "circle") {
       cx.beginPath();

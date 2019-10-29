@@ -2,11 +2,26 @@
     max-width: 500px;
     display: block;
     margin: 0 auto;
+    position: relative;
+}
+#label p {
+    padding: 0;
+    margin: 0;
+}
+#label {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: #000000bd;
+  padding: 1px 6px;
+  color: #fff;
+  display: none;
 }
 
 canvas{
   outline:1px solid #000;
   width: 100%;
+  position: relative;
 }
 .shape {
     padding-bottom: 120%;

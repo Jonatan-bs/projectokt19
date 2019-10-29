@@ -47,7 +47,7 @@ const Canvas = {
 /////////////////////////////
 
 const Rectangle = {
-  init(id,ctx, x, y, width, height,depth, div,rotate, color) {
+  init(id,ctx, x, y, width, height,depth, div,rotate, color,label) {
     this.id = id;
     this.type = "rectangle";
     this.x = x;
@@ -61,6 +61,7 @@ const Rectangle = {
     this.ctx = ctx;
     this.rotate = rotate;
     this.canAdd = false;
+    this.label = label;
 
   },
 
@@ -105,6 +106,7 @@ let Circle = {
   init(ctx, x, y, radius, sAngle, eAngle, clock, color) {
     this.type = "circle"
     this.id = "circle"
+    this.label = 'Door'
     this.ctx = ctx;
     this.x = x;
     this.y = y;
