@@ -1,6 +1,7 @@
 'use strict';
 
 let canArr = []; //REMOVE
+//let inside = false;
 
 /////////////////////////////
 ////////// Do stuff on load
@@ -47,18 +48,16 @@ window.addEventListener('load', init)
 
 ////////////////
 ///// make Object and div active on click
+///// + add hover addEventListener
 ///////////////////
 
 
 function makeActive(shapeDiv, shapeObj, canvasObj, hoverFunc) {
-
   // TRUE IF ALREADY ACTIVE
   let isActive = shapeDiv.classList.contains('active');
 
   // if divs and shapeObjects has active... remove active
   removeActive(canvasObj)
-
-
 
   canvasObj.canvas.removeEventListener('mousemove', hovershape) // NOT WORKING
 
@@ -100,6 +99,19 @@ function removeActive(canvasObj) {
 
 
 ////////////////
+///// Check if mouse inside canvas
+///////////////////
+/*
+function mousein(){
+inside = true
+}
+
+function mouseout(){
+inside = false
+}
+*/
+
+////////////////
 ///// SHOW SHAPE ON HOVER
 ///////////////////
 
@@ -117,9 +129,16 @@ function hovershape(ev) {
 
 
       // FIND NEAREST WALL
-      snapToWall(x, y, bb, shape, ev)
+      let xyArr = snapToWall(x, y, bb, shape, ev)
+      if(!isOccupied(xyArr[3],shape.width,xyArr[0],xyArr[1])){
+        shape.x = xyArr[0]
+        shape.y = xyArr[1]
+        shape.rotate = xyArr[2]
+        shape.wall = xyArr[3]
+        shape.draw()
+      }
 
-
+      shape.draw()
 
     }
   })
@@ -140,7 +159,6 @@ function addShape() {
       addNewShape.init(shape.id, shape.ctx, shape.x, shape.y, shape.width, shape.height, shape.depth, shape.div, shape.rotate, "green")
 
       /// ADD OCCUPIED WALL PIXELS TO CANVAS OBJ
-      let occupiedPixels = []
       if (shape.wall === 'top') {
         canArr[0].topPix.push([shape.x, shape.x + Number(shape.width)])
       } else if (shape.wall === 'bottom') {
@@ -183,7 +201,7 @@ function snapToWall(x, y, bb, shape, ev) {
 
 
   if (yTopOffset < yBottomOffset && yTopOffset < xLeftOffset && yTopOffset < xRightOffset) {
-    shape.wall = 'top'; // OCCUPIED SIDE
+    let wall = 'top'; // OCCUPIED SIDE
     let newY = 0;
     let newX;
 
@@ -195,9 +213,10 @@ function snapToWall(x, y, bb, shape, ev) {
     } else {
       newX = x - shape.width / 2;
     }
+    return [newX,newY,false,wall]
 
     // DRAW SHAPE
-    let i = false;
+    /*let i = false;
     canArr[0].topPix.forEach(function(dPix){
 
       if (dPix[0]<=newX && newX<=dPix[1] || dPix[0]<=newX+Number(shape.width) && newX+Number(shape.width)<=dPix[1] || newX<=dPix[0] && newX+Number(shape.width)>=dPix[0]  ) {
@@ -212,65 +231,97 @@ function snapToWall(x, y, bb, shape, ev) {
       shape.rotate = false;
 
     }
-    shape.draw();
+    shape.draw();*/
 
   } else if (yBottomOffset < yTopOffset && yBottomOffset < xLeftOffset && yBottomOffset < xRightOffset) {
-    shape.wall = 'bottom'; // OCCUPIED SIDE
-    shape.y = bb.height * cssDiffHeight - shape.depth;
+    let wall = 'bottom'; // OCCUPIED SIDE
+    let newY = bb.height * cssDiffHeight - shape.depth;
+    let newX;
 
     if (x > bb.width * cssDiffWidth - shape.width / 2) { // if outside canvas, move inside
-      shape.x = bb.width * cssDiffWidth - shape.width
+      newX = bb.width * cssDiffWidth - shape.width
     } else if (x < shape.width / 2) {
-      shape.x = 0
+      newX = 0
     } else {
-      shape.x = x - shape.width / 2;
+      newX = x - shape.width / 2;
     }
 
+    return [newX,newY,false,wall]
     // DRAW SHAPE
     shape.rotate = false;
     shape.draw();
   } else if (xLeftOffset < xRightOffset && xLeftOffset <= yBottomOffset && xLeftOffset <= yBottomOffset) {
-    shape.wall = 'left'; // OCCUPIED SIDE
-    shape.x = 0;
+    let wall = 'left'; // OCCUPIED SIDE
+    let newX = 0;
+    let newY;
+
     if (y > bb.height * cssDiffHeight - shape.width / 2) { // if outside canvas, move inside
-      shape.y = bb.height * cssDiffHeight - shape.width
+      newY = bb.height * cssDiffHeight - shape.width
     } else if (y < shape.width / 2) {
-      shape.y = 0
+      newY = 0
     } else {
-      shape.y = y - shape.width / 2;
+      newY = y - shape.width / 2;
     }
     // DRAW SHAPE
+    return [newX,newY,true,wall]
     shape.rotate = true;
     shape.draw();
   } else if (xRightOffset < xLeftOffset && xRightOffset <= yBottomOffset && xRightOffset <= yBottomOffset) {
-    shape.wall = 'right'; // OCCUPIED SIDE
-    shape.x = bb.width * cssDiffWidth - shape.depth;
+    let wall = 'right'; // OCCUPIED SIDE
+    let newX = bb.width * cssDiffWidth - shape.depth;
+    let newY;
+
     if (y > bb.height * cssDiffHeight - shape.width / 2) { // if outside canvas, move inside
-      shape.y = bb.height * cssDiffHeight - shape.width
+      newY = bb.height * cssDiffHeight - shape.width
     } else if (y < shape.width / 2) {
-      shape.y = 0
+      newY= 0
     } else {
-      shape.y = y - shape.width / 2;
+      newY = y - shape.width / 2;
     }
     // DRAW SHAPE
+    return [newX,newY,true,wall]
     shape.rotate = true;
     shape.draw();
   }
 
-  return [shape.x, shape.y]
+  return [shape.x, shape.y, shape.rotate]
 }
 
 
 //CHECK IF SPACE IS OCCUPIED
-function isOccupied(wall,width,pix){
-if(wall==='top'){
-  let i = false;
-canArr[0].topPix.forEach(function(dPix){
-  if (dPix[0]<=pix && pix<=dPix[1] || dPix[0]<=pix+Number(width) && pix+Number(width)<=dPix[1] ) {
-    return true;
-  }
+function isOccupied(wall,width,xPix,yPix){
 
-})
+if(wall==='top'){
+  for (let i = 0; i < canArr[0].topPix.length; i++) {
+    let dPix = canArr[0].topPix[i];
+    if (dPix[0]<xPix && xPix<dPix[1] || dPix[0]<xPix+Number(width) && xPix+Number(width)<dPix[1]  || xPix<=dPix[0] && xPix+Number(width)>dPix[0] ) {
+      return true;
+    }
+  }
+}
+if(wall==='bottom'){
+  for (let i = 0; i < canArr[0].bottomPix.length; i++) {
+    let dPix = canArr[0].bottomPix[i];
+    if (dPix[0]<xPix && xPix<dPix[1] || dPix[0]<xPix+Number(width) && xPix+Number(width)<dPix[1]  || xPix<=dPix[0] && xPix+Number(width)>dPix[0] ) {
+      return true;
+    }
+  }
+}
+if(wall==='left'){
+  for (let i = 0; i < canArr[0].leftPix.length; i++) {
+    let dPix = canArr[0].leftPix[i];
+    if (dPix[0]<yPix && yPix<dPix[1] || dPix[0]<yPix+Number(width) && yPix+Number(width)<dPix[1]  || yPix<=dPix[0] && yPix+Number(width)>dPix[0] ) {
+      return true;
+    }
+  }
+}
+if(wall==='right'){
+  for (let i = 0; i < canArr[0].rightPix.length; i++) {
+    let dPix = canArr[0].rightPix[i];
+    if (dPix[0]<yPix && yPix<dPix[1] || dPix[0]<yPix+Number(width) && yPix+Number(width)<dPix[1]  || yPix<=dPix[0] && yPix+Number(width)>dPix[0] ) {
+      return true;
+    }
+  }
 }
 }
 ////////////////
