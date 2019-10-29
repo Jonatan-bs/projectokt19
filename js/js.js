@@ -129,14 +129,23 @@ function hovershape(ev) {
 
 
       // FIND NEAREST WALL
-      let xyArr = snapToWall(x, y, bb, shape, ev)
+      let xyArr = snapToWall(x, y, shape, ev)
       if(!isOccupied(xyArr[3],shape.width,xyArr[0],xyArr[1])){
-        shape.x = xyArr[0]
+        /*shape.x = xyArr[0]
         shape.y = xyArr[1]
         shape.rotate = xyArr[2]
         shape.wall = xyArr[3]
-        shape.draw()
+        shape.draw()*/
+        shape.color = 'orange';
+        shape.canAdd = true;
+      } else {
+        shape.color = 'red';
+        shape.canAdd = false;
       }
+      shape.x = xyArr[0]
+      shape.y = xyArr[1]
+      shape.rotate = xyArr[2]
+      shape.wall = xyArr[3]
 
       shape.draw()
 
@@ -151,16 +160,28 @@ function hovershape(ev) {
 function addShape() {
 
   //PUSH ACTIVE SHAPE TO DRAWN SHAPES ARRAY
-  canArr[0].allShapes.forEach(function(shape) {
-    if (shape.active) {
 
+for (let i = 0; i < canArr[0].allShapes.length; i++) {
+
+    let shape = canArr[0].allShapes[i]
+
+    if (shape.active) {
+  if(!shape.canAdd){ return}
 
       let addNewShape = Object.create(Rectangle)
       addNewShape.init(shape.id, shape.ctx, shape.x, shape.y, shape.width, shape.height, shape.depth, shape.div, shape.rotate, "green")
 
       /// ADD OCCUPIED WALL PIXELS TO CANVAS OBJ
+      let x;
+      let y;
       if (shape.wall === 'top') {
-        canArr[0].topPix.push([shape.x, shape.x + Number(shape.width)])
+      /*  if (shape.x<60) { // if too close to wall occupy mor pixels
+          canArr[0].topPix.push([0, shape.x + Number(shape.width)])
+          canArr[0].leftPix.push([0, 60])
+        } else {*/
+          canArr[0].topPix.push([shape.x, shape.x + Number(shape.width)])
+      //  }
+
       } else if (shape.wall === 'bottom') {
         canArr[0].bottomPix.push([shape.x, shape.x + Number(shape.width)])
       } else if (shape.wall === 'left') {
@@ -171,7 +192,7 @@ function addShape() {
 
       canArr[0].drawnShapes.push(addNewShape)
     }
-  })
+  }
 
 
 
@@ -188,15 +209,15 @@ function addShape() {
 ////////////////
 ///// Snap to wall
 ///////////////////
-function snapToWall(x, y, bb, shape, ev) {
-  let cssDiffHeight = (ev.target.height / bb.height);
-  let cssDiffWidth = (ev.target.height / bb.height);
+function snapToWall(x, y, shape, ev) {
+  let canWidth = ev.target.width;
+  let canHeight = ev.target.height;
 
   // GET OFFSET FROM SIDES OF CANVAS
   let yTopOffset = y
-  let yBottomOffset = bb.height * cssDiffHeight - yTopOffset
+  let yBottomOffset = canHeight - yTopOffset
   let xLeftOffset = x
-  let xRightOffset = bb.width * cssDiffWidth - xLeftOffset
+  let xRightOffset = canWidth - xLeftOffset
 
 
 
@@ -206,8 +227,8 @@ function snapToWall(x, y, bb, shape, ev) {
     let newX;
 
 
-    if (x > bb.width * cssDiffWidth - shape.width / 2) { // if outside canvas, move inside
-      newX = bb.width * cssDiffWidth - shape.width
+    if (x > canWidth - shape.width / 2) { // if outside canvas, move inside
+      newX = canWidth - shape.width
     } else if (x < shape.width / 2) {
       newX = 0
     } else {
@@ -215,31 +236,14 @@ function snapToWall(x, y, bb, shape, ev) {
     }
     return [newX,newY,false,wall]
 
-    // DRAW SHAPE
-    /*let i = false;
-    canArr[0].topPix.forEach(function(dPix){
-
-      if (dPix[0]<=newX && newX<=dPix[1] || dPix[0]<=newX+Number(shape.width) && newX+Number(shape.width)<=dPix[1] || newX<=dPix[0] && newX+Number(shape.width)>=dPix[0]  ) {
-        return i = true
-      } else {
-        return i = false;
-      }
-    })
-    if(!i){
-      shape.x = newX;
-      shape.y = newY;
-      shape.rotate = false;
-
-    }
-    shape.draw();*/
 
   } else if (yBottomOffset < yTopOffset && yBottomOffset < xLeftOffset && yBottomOffset < xRightOffset) {
     let wall = 'bottom'; // OCCUPIED SIDE
-    let newY = bb.height * cssDiffHeight - shape.depth;
+    let newY = canHeight - shape.depth;
     let newX;
 
-    if (x > bb.width * cssDiffWidth - shape.width / 2) { // if outside canvas, move inside
-      newX = bb.width * cssDiffWidth - shape.width
+    if (x > canWidth - shape.width / 2) { // if outside canvas, move inside
+      newX = canWidth - shape.width
     } else if (x < shape.width / 2) {
       newX = 0
     } else {
@@ -255,8 +259,8 @@ function snapToWall(x, y, bb, shape, ev) {
     let newX = 0;
     let newY;
 
-    if (y > bb.height * cssDiffHeight - shape.width / 2) { // if outside canvas, move inside
-      newY = bb.height * cssDiffHeight - shape.width
+    if (y > canHeight - shape.width / 2) { // if outside canvas, move inside
+      newY = canHeight - shape.width
     } else if (y < shape.width / 2) {
       newY = 0
     } else {
@@ -268,11 +272,11 @@ function snapToWall(x, y, bb, shape, ev) {
     shape.draw();
   } else if (xRightOffset < xLeftOffset && xRightOffset <= yBottomOffset && xRightOffset <= yBottomOffset) {
     let wall = 'right'; // OCCUPIED SIDE
-    let newX = bb.width * cssDiffWidth - shape.depth;
+    let newX = canWidth - shape.depth;
     let newY;
 
-    if (y > bb.height * cssDiffHeight - shape.width / 2) { // if outside canvas, move inside
-      newY = bb.height * cssDiffHeight - shape.width
+    if (y > canHeight - shape.width / 2) { // if outside canvas, move inside
+      newY = canHeight - shape.width
     } else if (y < shape.width / 2) {
       newY= 0
     } else {
@@ -324,51 +328,3 @@ if(wall==='right'){
   }
 }
 }
-////////////////
-///// Check if shape is clicked
-///////////////////
-/*
-let hittest = function(ev,canvasObj) {
-
-  let activeIndex = -1;
-
-  let shapesArr = canvasObj.shapes;
-
-  for (let i = 0; i < shapesArr.length; i++) {
-    let cx = shapesArr[i].ctx;
-    if (shapesArr[i].type === "rectangle") {
-      cx.beginPath();
-      cx.rect(shapesArr[i].x, shapesArr[i].y, shapesArr[i].width, shapesArr[i].height);
-      cx.closePath()
-    } else if (shapesArr[i].type === "circle") {
-      cx.beginPath();
-      cx.arc(shapesArr[i].x, shapesArr[i].y, shapesArr[i].radius, shapesArr[i].sAngle, shapesArr[i].eAngle, shapesArr[i].clock);
-      cx.closePath()
-    }
-
-    let bb = ev.target.getBoundingClientRect(); // canvas size and pos
-    // mouse to canvas coordinates
-    let x = (ev.clientX - bb.left) * (ev.target.width / bb.width);
-    let y = (ev.clientY - bb.top) * (ev.target.height / bb.height);
-    if (cx.isPointInPath(x, y)) {
-
-      shapesArr.forEach(function(shape) {
-        shape.active = false;
-      })
-      shapesArr[i].active = true;
-
-    }
-
-    canvasObj.clear()
-
-    for (let shape of shapesArr) {
-      if (shape.active == true) {
-        shape.drawActive();
-      } else {
-        shape.draw();
-      }
-    }
-
-
-  }
-}*/

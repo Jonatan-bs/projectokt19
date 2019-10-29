@@ -25,6 +25,14 @@ const Canvas = {
     shape.draw()
     })
   },
+  get cssDiffWidth(){
+    let bb = this.canvas.getBoundingClientRect();
+    return (this.canvas.width / bb.width)
+  },
+  get cssDiffHeight(){
+    let bb = this.canvas.getBoundingClientRect();
+    return (this.canvas.height / bb.height)
+  },
 
 
 
@@ -50,6 +58,7 @@ const Rectangle = {
     this.div = div;
     this.ctx = ctx;
     this.rotate = rotate;
+    this.canAdd = false;
 
   },
 
