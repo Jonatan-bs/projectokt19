@@ -18,6 +18,8 @@ const Canvas = {
   },
   clear() {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.context.fillStyle = '#f2f2f2'
+    this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
   },
   redraw() {
     this.clear()
@@ -67,9 +69,11 @@ const Rectangle = {
       if (this.rotate) {
         this.ctx.fillStyle = this.color;
         this.ctx.fillRect(this.x, this.y, this.depth, this.width);
+        this.ctx.strokeRect(this.x, this.y, this.depth, this.width);
       } else {
         this.ctx.fillStyle = this.color;
         this.ctx.fillRect(this.x, this.y, this.width, this.depth);
+        this.ctx.strokeRect(this.x, this.y, this.width, this.depth);
       }
 
 
@@ -98,9 +102,10 @@ const Rectangle = {
 /////////////////////////////
 
 let Circle = {
-  init(cv, x, y, radius, sAngle, eAngle, clock, color) {
+  init(ctx, x, y, radius, sAngle, eAngle, clock, color) {
     this.type = "circle"
-    this.ctx = cv.context;
+    this.id = "circle"
+    this.ctx = ctx;
     this.x = x;
     this.y = y;
     this.radius = radius;
@@ -120,6 +125,7 @@ let Circle = {
     this.ctx.arc(this.x, this.y, this.radius, this.sAngle, this.eAngle, this.clock)
     this.ctx.closePath()
     this.ctx.fill();
+
 
 
   }

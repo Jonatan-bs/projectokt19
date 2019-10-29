@@ -1,13 +1,43 @@
+.wrapper {
+    max-width: 500px;
+    display: block;
+    margin: 0 auto;
+}
+
 canvas{
   outline:1px solid #000;
+  width: 100%;
 }
-.shape{
-  width: 100px;
-  height: 100px;
-  outline: 1px solid #000;
-  cursor: pointer;
+.shape {
+    padding-bottom: 120%;
+    width: 100%;
+    height: 0;
+    outline: 1px solid #000;
+    cursor: pointer;
+    background-size: cover;
 }
 .shape.active{
   outline: 5px solid #00f;
   outline-offset: -4px;
+}
+.flexWrap{
+  display: flex;
+  padding: 0;
+  margin: 0;
+}
+ul.flexwrap>li {
+    list-style: none;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+#cabinet1{
+  background-image:url('https://f31.sg/pub/media/catalog/product/cache/62a299e7a2192b9eaa9ca05bd6aa3170/4/8/4875.jpg')
+}
+#cabinet2{
+  background-image:url('https://f31.sg/pub/media/catalog/product/cache/c70a599460213fb9a71dfb0ccabd47d5/4/7/47ikj.jpg')
+}
+#cabinet3{
+  background-image:url('https://f31.sg/pub/media/catalog/product/cache/c70a599460213fb9a71dfb0ccabd47d5/8/4/8405.jpg')
 }
