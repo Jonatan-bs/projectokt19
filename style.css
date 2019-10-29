@@ -1,0 +1,13 @@
+canvas{
+  outline:1px solid #000;
+}
+.shape{
+  width: 100px;
+  height: 100px;
+  outline: 1px solid #000;
+  cursor: pointer;
+}
+.shape.active{
+  outline: 5px solid #00f;
+  outline-offset: -4px;
+}
