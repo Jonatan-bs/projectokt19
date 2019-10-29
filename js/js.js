@@ -29,14 +29,24 @@ function init() {
     //ADD TO SHAPE ARRAY IN CANVAS
     kitchenCan.allShapes.push(shapeObj)
 
+
+
     // MAKE OBJECT AND DIV ACTIVE ON CLICK
     shapeDiv.addEventListener('click', function() {
       makeActive(shapeDiv, shapeObj, kitchenCan)
     })
   }
+  // MAKE DOOR AND ADD TO CANVAS
+  let shapeObj = Object.create(Circle)
+  //init(cv, x, y, radius, sAngle, eAngle, clock, color)
+  shapeObj.init(kitchenCan, 50, 0, 50, 0, Math.PI/180*110, false, 'grey')
+  kitchenCan.drawnShapes.push(shapeObj)
+  console.log(shapeObj);
+
 
   kitchenCan.canvas.addEventListener('click', addShape)
 
+  kitchenCan.canvas.addEventListener('mouseout', function(){kitchenCan.redraw();})
 
 
 }
@@ -53,11 +63,14 @@ window.addEventListener('load', init)
 
 
 function makeActive(shapeDiv, shapeObj, canvasObj, hoverFunc) {
+
   // TRUE IF ALREADY ACTIVE
   let isActive = shapeDiv.classList.contains('active');
 
   // if divs and shapeObjects has active... remove active
   removeActive(canvasObj)
+  canvasObj.canvas.removeEventListener('click', hittest)
+  canvasObj.redraw()
 
   canvasObj.canvas.removeEventListener('mousemove', hovershape) // NOT WORKING
 
@@ -87,6 +100,7 @@ function makeActive(shapeDiv, shapeObj, canvasObj, hoverFunc) {
 
 
 function removeActive(canvasObj) {
+  canvasObj.canvas.addEventListener('click', hittest)
   // IF ANY shapeDIV HAS CLASS ACTIVE, REMOVE CLASS
   document.querySelectorAll('.shape.active').forEach(function(div) {
     div.classList.remove("active")
@@ -97,19 +111,6 @@ function removeActive(canvasObj) {
   });
 }
 
-
-////////////////
-///// Check if mouse inside canvas
-///////////////////
-/*
-function mousein(){
-inside = true
-}
-
-function mouseout(){
-inside = false
-}
-*/
 
 ////////////////
 ///// SHOW SHAPE ON HOVER
@@ -166,28 +167,34 @@ for (let i = 0; i < canArr[0].allShapes.length; i++) {
     let shape = canArr[0].allShapes[i]
 
     if (shape.active) {
-  if(!shape.canAdd){ return}
+    if(!shape.canAdd){return} // if Cant add, do nothing
 
       let addNewShape = Object.create(Rectangle)
       addNewShape.init(shape.id, shape.ctx, shape.x, shape.y, shape.width, shape.height, shape.depth, shape.div, shape.rotate, "green")
-
+      addNewShape.wall = shape.wall;
       /// ADD OCCUPIED WALL PIXELS TO CANVAS OBJ
       let x;
       let y;
+      //let occuPix;
       if (shape.wall === 'top') {
       /*  if (shape.x<60) { // if too close to wall occupy mor pixels
           canArr[0].topPix.push([0, shape.x + Number(shape.width)])
-          canArr[0].leftPix.push([0, 60])
+          canArr[0].leftPix.push([0, Number(shape.width)+Number(shape.depth)])
         } else {*/
-          canArr[0].topPix.push([shape.x, shape.x + Number(shape.width)])
-      //  }
+        addNewShape.occuPix = [shape.x, shape.x + Number(shape.width)]
+          canArr[0].topPix.push(addNewShape.occuPix )
+
+       //}
 
       } else if (shape.wall === 'bottom') {
-        canArr[0].bottomPix.push([shape.x, shape.x + Number(shape.width)])
+        addNewShape.occuPix = [shape.x, shape.x + Number(shape.width)]
+        canArr[0].bottomPix.push(addNewShape.occuPix )
       } else if (shape.wall === 'left') {
-        canArr[0].leftPix.push([shape.y, shape.y + Number(shape.width)])
+        addNewShape.occuPix = [shape.y, shape.y + Number(shape.width)]
+        canArr[0].leftPix.push(addNewShape.occuPix )
       } else if (shape.wall === 'right') {
-        canArr[0].rightPix.push([shape.y, shape.y + Number(shape.width)])
+        addNewShape.occuPix = [shape.y, shape.y + Number(shape.width)]
+        canArr[0].rightPix.push(addNewShape.occuPix )
       }
 
       canArr[0].drawnShapes.push(addNewShape)
@@ -328,3 +335,57 @@ if(wall==='right'){
   }
 }
 }
+
+
+////////////////
+///// Check if shape is clicked
+///////////////////
+
+let hittest = function(ev) {
+
+  let drawnShapes = canArr[0].drawnShapes
+
+  for (let i = 0; i < drawnShapes.length; i++) {
+    let cx = drawnShapes[i].ctx;
+    if (drawnShapes[i].type === "rectangle") {
+      cx.beginPath();
+      cx.rect(drawnShapes[i].x, drawnShapes[i].y, drawnShapes[i].width, drawnShapes[i].height);
+      cx.closePath()
+    }
+
+    let bb = this.getBoundingClientRect(); // canvas size and pos
+    // mouse to canvas coordinates
+    let x = (ev.clientX - bb.left) * (this.width / bb.width);
+    let y = (ev.clientY - bb.top) * (this.height / bb.height);
+    if (cx.isPointInPath(x, y)) {
+
+      let shape = drawnShapes[i]
+      //make div and samme obj active
+      for (let i = 0; i < canArr[0].allShapes.length; i++) {
+        if (canArr[0].allShapes[i].id === shape.id) {
+          canArr[0].allShapes[i].active = true;
+        }
+      }
+
+      //remove occupied pixels
+      let wall = shape.wall + "Pix";
+      canArr[0][wall].forEach(function(occuPix,index){
+        if(shape.occuPix === occuPix){;
+          console.log('e');
+        canArr[0][wall].splice(index, 1);
+        // remove shape
+        drawnShapes.splice(i,1)
+
+      }
+
+      })
+
+
+      canArr[0].canvas.addEventListener('mousemove', hovershape)
+      canArr[0].canvas.removeEventListener('click', hittest)
+    }
+
+
+
+
+  }}

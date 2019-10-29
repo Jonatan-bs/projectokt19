@@ -96,13 +96,13 @@ const Rectangle = {
 /////////////////////////////
 //////////create Circle Object
 /////////////////////////////
-/*
+
 let Circle = {
   init(cv, x, y, radius, sAngle, eAngle, clock, color) {
     this.type = "circle"
     this.ctx = cv.context;
-    this.x = x + radius;
-    this.y = y + radius;
+    this.x = x;
+    this.y = y;
     this.radius = radius;
     this.sAngle = sAngle;
     this.eAngle = eAngle;
@@ -116,6 +116,7 @@ let Circle = {
 
     this.ctx.beginPath()
     this.ctx.fillStyle = this.color;
+    this.ctx.moveTo(this.x, this.y);
     this.ctx.arc(this.x, this.y, this.radius, this.sAngle, this.eAngle, this.clock)
     this.ctx.closePath()
     this.ctx.fill();
@@ -123,5 +124,3 @@ let Circle = {
 
   }
 };
-
-*/
