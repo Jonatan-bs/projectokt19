@@ -24,7 +24,14 @@ const Canvas = {
   redraw() {
     this.clear()
     this.drawnShapes.forEach(function(shape){
+      /*if (shape.hold) {
+        shape.hold = false;
+        shape.active = true;
+      }*/
+
+    if (shape.active) {
     shape.draw()
+    }
     })
   },
   get cssDiffWidth(){
