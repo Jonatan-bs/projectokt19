@@ -22,10 +22,11 @@ function init() {
     let height = shapeDiv.dataset.height;
     let depth = shapeDiv.dataset.depth;
     let label = shapeDiv.dataset.label;
+    let placement = shapeDiv.dataset.placement;
     let id = shapeDiv.id;
 
     let shapeObj = Object.create(Rectangle)
-    shapeObj.init(id, kitchenCan.context, 0, 0, width, height, depth, shapeDiv, false, "orange",label)
+    shapeObj.init(id, kitchenCan.context, 0, 0, width, height, depth, shapeDiv, false, "orange",label,placement)
 
     //ADD TO SHAPE ARRAY IN CANVAS
     kitchenCan.allShapes.push(shapeObj)
@@ -231,7 +232,7 @@ canArr[0].canvas.style.cursor = 'move';
         circle = true;
         radius = shape.radius
       } else {
-        xyArr = snapToWall(x, y, shape, ev)
+        xyArr = snapToWall(x, y, shape, ev, false)
 
       }
 
@@ -269,11 +270,6 @@ for (let i = 0; i < canArr[0].allShapes.length; i++) {
     if(!shape.canAdd){
         return
       }
-       // if Cant add, do nothing
-      /*if (shape.type==='circle') {
-        console.log('cc');
-        return
-      }*/
       let addNewShape;
       let x;
       let y;
@@ -296,7 +292,7 @@ for (let i = 0; i < canArr[0].allShapes.length; i++) {
 
     } else {
       addNewShape = Object.create(Rectangle)
-      addNewShape.init(shape.id, shape.ctx, shape.x, shape.y, shape.width, shape.height, shape.depth, shape.div, shape.rotate, "green",shape.label)
+      addNewShape.init(shape.id, shape.ctx, shape.x, shape.y, shape.width, shape.height, shape.depth, shape.div, shape.rotate, "green",shape.label,shape.placement)
       addNewShape.wall = shape.wall;
       x = shape.x;
       y = shape.y;
@@ -346,15 +342,17 @@ for (let i = 0; i < canArr[0].allShapes.length; i++) {
 ////////////////
 ///// Snap to wall
 ///////////////////
-function snapToWall(x, y, shape, ev) {
+function snapToWall(x, y, shape, ev, wall) {
   let canWidth = ev.target.width;
   let canHeight = ev.target.height;
+
   // GET OFFSET FROM SIDES OF CANVAS
   let yTopOffset = y
   let yBottomOffset = canHeight - yTopOffset
   let xLeftOffset = x
   let xRightOffset = canWidth - xLeftOffset
 
+if (wall) {
 
 
   if (yTopOffset < yBottomOffset && yTopOffset < xLeftOffset && yTopOffset < xRightOffset) {
@@ -426,6 +424,32 @@ function snapToWall(x, y, shape, ev) {
   }
 
   return [shape.x, shape.y, shape.rotate]
+
+} else { // if not snap to wall, prevent moving out of canvas
+
+
+let newY;
+let newX;
+
+  if (y > canHeight - shape.width / 2) { // if outside canvas, move inside
+    newY = canHeight - shape.width
+  } else if (y < shape.width / 2) {
+    newY= 0
+  } else {
+    newY = y - shape.width / 2;
+  }
+
+  if (x > canWidth - shape.width / 2) { // if outside canvas, move inside
+    newX = canWidth - shape.width
+  } else if (x < shape.width / 2) {
+    newX = 0
+  } else {
+    newX = x - shape.width / 2;
+  }
+
+
+  return [shape.x, shape.y, true]
+}
 }
 
 ////////////////

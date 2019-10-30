@@ -47,7 +47,7 @@ const Canvas = {
 /////////////////////////////
 
 const Rectangle = {
-  init(id,ctx, x, y, width, height,depth, div,rotate, color,label) {
+  init(id,ctx, x, y, width, height,depth, div,rotate, color,label,placement) {
     this.id = id;
     this.type = "rectangle";
     this.x = x;
@@ -62,6 +62,7 @@ const Rectangle = {
     this.rotate = rotate;
     this.canAdd = false;
     this.label = label;
+    this.placement = placement;
 
   },
 
