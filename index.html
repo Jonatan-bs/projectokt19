@@ -2,17 +2,27 @@
   <html lang="en" dir="ltr">
     <head>
       <meta charset="utf-8">
-      <title></title>
+      <title>IBA Køkkener</title>
       <link rel="stylesheet" href="style.css">
-      <script src="js/objects.js" charset="utf-8"></script>
-      <script src="js/js.js" charset="utf-8"></script>
     </head>
 
 <body>
-  <div class="wrapper">
-    <label>Length (meter)</label><input type="number" min="1" id="canLength" value="4">
-    <label>Width (meter)</label><input type="number" min="1" id="canWidth" value="5">
-    <button id="reset"> Clear and resize kitchen</button>
+  <header>
+  </header>
+  <section>
+    <div class="slider">
+      </div>
+  </section>
+  <section>
+  <div class="infoboxes">
+    </div>
+    </section>
+    <section class="kitchenplanner">
+      <button id="show" class="showplanner">Gå til vores køkkendesigner</button>
+      <div class="wrapper">
+        <label>Length (meter)</label><input type="number" min="1" id="canLength" value="4">
+        <label>Width (meter)</label><input type="number" min="1" id="canWidth" value="5">
+        <button id="reset"> Clear and resize kitchen</button>
 
     <ul class="flexWrap">
       <li>
@@ -30,14 +40,19 @@
     </ul>
     <div style="position:relative">
 
-      <canvas id="kitchen" width="500" height="400">
+          <canvas id="kitchen" width="500" height="400">
 
-      </canvas>
-      <div id="label">
-        <p></p>
+          </canvas>
+          <div id="label">
+            <p></p>
+          </div>
+        </div>
+        <button id="orderInfo"> Get order information</button>
       </div>
-    </div>
-    <button id="orderInfo"> Get order information</button>
-  </div>
+    </section>
+  <footer>
+  </footer>
 </body>
+<script src="js/objects.js" charset="utf-8"></script>
+<script src="js/js.js" charset="utf-8"></script>
 </html>
