@@ -63,7 +63,6 @@ const Rectangle = {
     this.canAdd = false;
     this.label = label;
     this.placement = placement;
-
   },
 
   draw() {

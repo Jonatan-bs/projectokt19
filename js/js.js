@@ -53,12 +53,23 @@ function init() {
   //kitchenCan.canvas.addEventListener('click', hittest)
   kitchenCan.canvas.addEventListener('click', addShape)
   kitchenCan.canvas.addEventListener('mouseout', function(){kitchenCan.redraw();})
-kitchenCan.canvas.addEventListener('mousemove', infolabel)
+  kitchenCan.canvas.addEventListener('mousemove', infolabel)
 
   //RESIZE BUTTON
   document.getElementById('reset').addEventListener('click', function(){resetResize(shapeObj)})
   //RESIZE BUTTON
   document.getElementById('orderInfo').addEventListener('click', function(){orderInfo();})
+
+  let eventTrack;
+  canArr[0].canvas.addEventListener('mousemove', function(ev){ eventTrack = ev; })
+
+
+  //ROTATE ON SPACE CLICK
+  document.body.onkeyup = function(e){
+    if(e.keyCode == 32){
+        rotate(eventTrack)
+    }
+}
 }
 window.addEventListener('load', init)
 
@@ -207,6 +218,7 @@ function removeActive() {
 ///////////////////
 
 function hovershape(ev) {
+  console.log(ev);
 canArr[0].canvas.style.cursor = 'move';
   canArr[0].allShapes.forEach(function(shape) {
     if (shape.active) {
@@ -231,12 +243,14 @@ canArr[0].canvas.style.cursor = 'move';
         xyArr = snapToWallCircle(x, y, shape, ev)
         circle = true;
         radius = shape.radius
-      } else {
-        xyArr = snapToWall(x, y, shape, ev, false)
+      } else if (shape.placement === 'wall') {
+        xyArr = snapToWall(x, y, shape, ev, true,shape.rotate)
 
+      } else {
+        xyArr = snapToWall(x, y, shape, ev, false, shape.rotate)
       }
 
-
+/*
       if(!isOccupied(xyArr[3],shape.width,xyArr[0],xyArr[1],circle,radius)){
         shape.color = 'orange';
         shape.canAdd = true;
@@ -244,6 +258,10 @@ canArr[0].canvas.style.cursor = 'move';
         shape.color = 'red';
         shape.canAdd = false;
       }
+      */
+      ////
+      shape.canAdd = true;
+      /////
       shape.x = xyArr[0]
       shape.y = xyArr[1]
       shape.rotate = xyArr[2]
@@ -257,6 +275,25 @@ canArr[0].canvas.style.cursor = 'move';
 
 
 }
+
+
+/// ROTATE SHAPE
+function rotate(ev){
+
+canArr[0].allShapes.forEach(function(shape){
+
+  if (shape.active) {
+    if(shape.rotate){
+      shape.rotate = false
+    } else {
+      shape.rotate = true
+    }
+  }
+
+})
+hovershape(ev)
+}
+
 
 
 function addShape() {
@@ -345,6 +382,7 @@ for (let i = 0; i < canArr[0].allShapes.length; i++) {
 function snapToWall(x, y, shape, ev, wall) {
   let canWidth = ev.target.width;
   let canHeight = ev.target.height;
+  //shape.rotate = true;
 
   // GET OFFSET FROM SIDES OF CANVAS
   let yTopOffset = y
@@ -430,25 +468,35 @@ if (wall) {
 
 let newY;
 let newX;
+let rotate = shape.rotate;
+let shapeWidth = shape.width;
+let shapeHeight = shape.depth;
 
-  if (y > canHeight - shape.width / 2) { // if outside canvas, move inside
-    newY = canHeight - shape.width
-  } else if (y < shape.width / 2) {
-    newY= 0
+if (rotate) {
+  shapeWidth = shape.depth;
+  shapeHeight = shape.width;
+}
+
+  if (y > canHeight - shapeHeight / 2) { // if outside canvas, move inside
+    newY = canHeight - shapeHeight
+
+  } else if (y < shapeHeight / 2) {
+    newY = 0
+
   } else {
-    newY = y - shape.width / 2;
+    newY = y - shapeHeight / 2;
   }
 
-  if (x > canWidth - shape.width / 2) { // if outside canvas, move inside
-    newX = canWidth - shape.width
-  } else if (x < shape.width / 2) {
+  if (x > canWidth - shapeWidth / 2) { // if outside canvas, move inside
+    newX = canWidth - shapeWidth
+  } else if (x < shapeWidth / 2) {
     newX = 0
   } else {
-    newX = x - shape.width / 2;
+    newX = x - shapeWidth / 2;
   }
 
 
-  return [shape.x, shape.y, true]
+  return [newX, newY, rotate]
 }
 }
 
@@ -500,8 +548,8 @@ function snapToWallCircle(x, y, shape, ev) {
 
     return [newX,newY,3,wall]
     // DRAW SHAPE
-    shape.rotate = false;
-    shape.draw();
+  //  shape.rotate = false;
+  //  shape.draw();
   } else if (xLeftOffset < xRightOffset && xLeftOffset <= yBottomOffset && xLeftOffset <= yBottomOffset) {
     let wall = 'left'; // OCCUPIED SIDE
     let newX = 0;
@@ -516,8 +564,8 @@ function snapToWallCircle(x, y, shape, ev) {
     }
     // DRAW SHAPE
     return [newX,newY,4,wall]
-    shape.rotate = true;
-    shape.draw();
+  //  shape.rotate = true;
+  //  shape.draw();
   } else if (xRightOffset < xLeftOffset && xRightOffset <= yBottomOffset && xRightOffset <= yBottomOffset) {
     let wall = 'right'; // OCCUPIED SIDE
     let newX = canWidth;
@@ -532,8 +580,8 @@ function snapToWallCircle(x, y, shape, ev) {
     }
     // DRAW SHAPE
     return [newX,newY,2,wall]
-    shape.rotate = true;
-    shape.draw();
+    //shape.rotate = true;
+    //shape.draw();
   }
 
   return [shape.x, shape.y, shape.rotate]
