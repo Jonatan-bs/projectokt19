@@ -122,7 +122,7 @@ function orderInfo() {
           count++
         }
       })
-      labelPrice.push({'label' : label,'amount' : count, 'price' : price, 'total price' : price*count })
+      labelPrice.push({'label' : label,'amount' : count, 'price' : price, 'totalPrice' : price*count })
 
 
 
@@ -132,7 +132,24 @@ function orderInfo() {
 
 labelPrice.forEach(function(obj){
   if (obj.amount>0) {
-    console.log(obj);
+    let p = document.createElement('p')
+    p.className = 'label'
+    p.innerHTML = obj.label
+
+    document.getElementById('items').appendChild(p)
+
+     p = document.createElement('p')
+    p.className = 'amount'
+    p.innerHTML = obj.amount + ' Stk.'
+
+    document.getElementById('items').appendChild(p)
+
+     p = document.createElement('p')
+    p.className = 'totalPrice'
+    p.innerHTML = obj.totalPrice + 'kr.'
+
+    document.getElementById('items').appendChild(p)
+
   }
 
 })
