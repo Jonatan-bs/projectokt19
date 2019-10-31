@@ -7,6 +7,7 @@ let canArr = []; //REMOVE
 ////////// Do stuff on load
 /////////////////////////////
 
+
 function init() {
 
 
@@ -44,7 +45,7 @@ function init() {
   // MAKE DOOR AND ADD TO CANVAS
   let shapeObj = Object.create(Circle)
   //init(cv, x, y, radius, sAngle, eAngle, clock, color)
-  shapeObj.init(kitchenCan.context, 70, 0, 70, 0, Math.PI / 180 * 110, false, 'grey', 1)
+  shapeObj.init(kitchenCan.context, 70, 0, 90, 0, Math.PI / 180 * 110, false, 'grey', 1)
   shapeObj.active = true;
   shapeObj.canAdd = true;
   kitchenCan.allShapes.push(shapeObj)
@@ -59,11 +60,15 @@ function init() {
 
   //RESIZE BUTTON
   document.getElementById('reset').addEventListener('click', function() {
+    document.getElementById('items').innerHTML = "";
     resetResize(shapeObj)
+
   })
   //RESIZE BUTTON
   document.getElementById('orderInfo').addEventListener('click', function() {
+    document.getElementById('items').innerHTML = "";
     orderInfo();
+
   })
 
   let eventTrack;
@@ -140,13 +145,13 @@ labelPrice.forEach(function(obj){
 
      p = document.createElement('p')
     p.className = 'amount'
-    p.innerHTML = obj.amount + ' Stk.'
+    p.innerHTML =   obj.amount + ' x ' + obj.price + 'kr.';
 
     document.getElementById('items').appendChild(p)
 
      p = document.createElement('p')
     p.className = 'totalPrice'
-    p.innerHTML = obj.totalPrice + 'kr.'
+    p.innerHTML =  obj.totalPrice + 'kr.'
 
     document.getElementById('items').appendChild(p)
 
@@ -360,7 +365,6 @@ function hovershape(ev) {
         shape.canAdd = false;
         shape.draw('#ff00009e')
       }
-console.log('hovershape');
 
     }
   })

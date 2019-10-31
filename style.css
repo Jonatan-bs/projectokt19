@@ -201,11 +201,14 @@ p.totalPrice {
 }
 
 #cabinet1{
-  background-image:url('https://f31.sg/pub/media/catalog/product/cache/62a299e7a2192b9eaa9ca05bd6aa3170/4/8/4875.jpg')
+  background-image:url('img/wallskab2.webp')
 }
 #cabinet2{
-  background-image:url('https://f31.sg/pub/media/catalog/product/cache/c70a599460213fb9a71dfb0ccabd47d5/4/7/47ikj.jpg')
+  background-image:url('img/wallskab1.webp')
 }
 #cabinet3{
-  background-image:url('https://f31.sg/pub/media/catalog/product/cache/c70a599460213fb9a71dfb0ccabd47d5/8/4/8405.jpg')
+  background-image:url('img/gulvskab1.webp')
+}
+#cabinet4{
+  background-image:url('img/gulvskab2.webp')
 }
