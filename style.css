@@ -9,15 +9,26 @@
     margin: 0;
 }
 #label {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  background: #000000bd;
-  padding: 1px 6px;
-  color: #fff;
-  display: none;
+  position: fixed;
+    bottom: -5px;
+    left: 0;
+    right: 0;
+    background: #000000;
+    padding: 1px 6px;
+    color: #fff;
+    opacity: 0;
+    transition: .1s all;
 }
-
+#label.active {
+  bottom: 0px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    background: #000000;
+    padding: 3px 0;
+    color: #fff;
+    opacity: .5;
+}
 canvas{
   outline:1px solid #000;
   width: 100%;

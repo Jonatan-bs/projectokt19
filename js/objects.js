@@ -11,10 +11,10 @@ const Canvas = {
     this.allShapes = [];
     this.drawnShapes = [];
     //OCCUPIED EDGE PIXELS
-    this.leftPix =[]
+  /*  this.leftPix =[]
     this.rightPix =[]
     this.topPix =[]
-    this.bottomPix =[]
+    this.bottomPix =[]*/
   },
   clear() {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -54,7 +54,7 @@ const Canvas = {
 /////////////////////////////
 
 const Rectangle = {
-  init(id,ctx, x, y, width, height,depth, div,rotate, color,label,placement) {
+  init(id,ctx, x, y, width, height,depth, div,rotate, color,label,placement,price) {
     this.id = id;
     this.type = "rectangle";
     this.x = x;
@@ -70,24 +70,60 @@ const Rectangle = {
     this.canAdd = false;
     this.label = label;
     this.placement = placement;
+    this.price = price;
   },
 
-  draw() {
+  draw(color) {
     //IF ROTATE IS TRUE, ROTATE
+    if (color) {
+      if (this.rotate) {
+        this.ctx.fillStyle = color;
+        this.ctx.fillRect(this.x, this.y, this.depth, this.width);
+        //this.ctx.strokeRect(this.x, this.y, this.depth, this.width);
+      } else {
+        this.ctx.fillStyle = color;
+        this.ctx.fillRect(this.x, this.y, this.width, this.depth);
+      //  this.ctx.strokeRect(this.x, this.y, this.width, this.depth);
+    }
+
+  } else if (this.placement==='floor') {
+    if (this.rotate) {
+      this.ctx.fillStyle = '#0053ffc9';
+      this.ctx.strokeRect(this.x, this.y, this.depth, this.width);
+      this.ctx.fillRect(this.x, this.y, this.depth, this.width);
+    } else {
+      this.ctx.fillStyle ='#0053ffc9';
+      this.ctx.strokeRect(this.x, this.y, this.width, this.depth);
+      this.ctx.fillRect(this.x, this.y, this.width, this.depth);
+    }
+  } else if (this.placement==='wall') {
+    if (this.rotate) {
+      this.ctx.fillStyle = '#f9b300c2';
+      this.ctx.strokeRect(this.x, this.y, this.depth, this.width);
+      this.ctx.fillRect(this.x, this.y, this.depth, this.width);
+    } else {
+      this.ctx.fillStyle ='#f9b300c2';
+      this.ctx.strokeRect(this.x, this.y, this.width, this.depth);
+      this.ctx.fillRect(this.x, this.y, this.width, this.depth);
+    }
+  }
+  else {
       if (this.rotate) {
         this.ctx.fillStyle = this.color;
-        this.ctx.fillRect(this.x, this.y, this.depth, this.width);
         this.ctx.strokeRect(this.x, this.y, this.depth, this.width);
+        //this.ctx.strokeRect(this.x, this.y, this.depth, this.width);
       } else {
         this.ctx.fillStyle = this.color;
-        this.ctx.fillRect(this.x, this.y, this.width, this.depth);
         this.ctx.strokeRect(this.x, this.y, this.width, this.depth);
+      //  this.ctx.strokeRect(this.x, this.y, this.width, this.depth);
       }
+    }
+
 
 
 
     },
-    testRect() { // FOR USE WIDTH isPointInPath
+/*    testRect() { // FOR USE WIDTH isPointInPath
       //IF ROTATE IS TRUE, ROTATE
         if (this.rotate) {
           this.ctx.rect(this.x, this.y, this.depth, this.width);
@@ -97,7 +133,7 @@ const Rectangle = {
 
 
 
-      }
+      }*/
 
 
 
@@ -110,7 +146,7 @@ const Rectangle = {
 /////////////////////////////
 
 let Circle = {
-  init(ctx, x, y, radius, sAngle, eAngle, clock, color) {
+  init(ctx, x, y, radius, sAngle, eAngle, clock, color,rotate) {
     this.type = "circle"
     this.id = "circle"
     this.label = 'Door'
@@ -118,24 +154,40 @@ let Circle = {
     this.x = x;
     this.y = y;
     this.radius = radius;
-    this.sAngle = sAngle;
-    this.eAngle = eAngle;
+    this.rotate = rotate;
+    this.sAngle = Math.PI/2*(this.rotate-1);
+    this.eAngle = Math.PI/180*110+ this.sAngle;
     this.clock = clock;
     this.color = color;
     this.active = false;
+    this.placement = 'wall';
+
 
   },
 
-  draw() {
+  draw(color) {
+    if (color) {
+      this.ctx.beginPath()
+      this.ctx.fillStyle = color;
+      this.ctx.moveTo(this.x, this.y);
+      this.ctx.arc(this.x, this.y, this.radius, this.sAngle, this.eAngle, this.clock)
+      this.ctx.closePath()
+      this.ctx.fill();
+    } else {
+      this.ctx.beginPath()
+      this.ctx.fillStyle = this.color;
+      this.ctx.moveTo(this.x, this.y);
+      this.ctx.arc(this.x, this.y, this.radius, this.sAngle, this.eAngle, this.clock)
+      this.ctx.closePath()
+      this.ctx.stroke();
+    }
 
-    this.ctx.beginPath()
-    this.ctx.fillStyle = this.color;
-    this.ctx.moveTo(this.x, this.y);
-    this.ctx.arc(this.x, this.y, this.radius, this.sAngle, this.eAngle, this.clock)
-    this.ctx.closePath()
-    this.ctx.fill();
 
 
 
+  },
+  setRotate(){
+    this.sAngle = Math.PI/2*(this.rotate-1);
+    this.eAngle = Math.PI/180*110+ this.sAngle;
   }
 };

@@ -26,11 +26,11 @@ function init() {
     let depth = shapeDiv.dataset.depth;
     let label = shapeDiv.dataset.label;
     let placement = shapeDiv.dataset.placement;
-    let price = shapeDiv.dataset.price;
     let id = i; //shapeDiv.id;
 
     let shapeObj = Object.create(Rectangle)
-    shapeObj.init(id, kitchenCan.context, 0, 0, width, height, depth, shapeDiv, false, "orange", label, placement,price)
+    shapeObj.init(id, kitchenCan.context, 0, 0, width, height, depth, shapeDiv, false, "orange", label, placement)
+
     //ADD TO SHAPE ARRAY IN CANVAS
     kitchenCan.allShapes.push(shapeObj)
 
@@ -55,7 +55,7 @@ function init() {
   kitchenCan.canvas.addEventListener('mousedown', hittest)
   //kitchenCan.canvas.addEventListener('click', addShape)
   //kitchenCan.canvas.addEventListener('mouseout', function(){kitchenCan.redraw();})
-  kitchenCan.canvas.addEventListener('mousemove', infolabelHover)
+  kitchenCan.canvas.addEventListener('mousemove', infolabel)
 
   //RESIZE BUTTON
   document.getElementById('reset').addEventListener('click', function() {
@@ -109,40 +109,18 @@ function resetResize(circle) {
 
 // GET ORDER INFO AND RESET
 function orderInfo() {
-  let kinds = []
-    let labelPrice = []
-  // for hver type
-  canArr[0].allShapes.forEach(function(elm) {
+  canArr[0].drawnShapes.forEach(function(elm) {
     if (elm.type !== 'circle') {
-      let label = elm.label;
-      let price = elm.price;
-      let count = 0;
-      canArr[0].drawnShapes.forEach(function(drawnElm) {
-        if (drawnElm.label == elm.label) {
-          count++
-        }
-      })
-      labelPrice.push({'label' : label,'amount' : count, 'price' : price, 'total price' : price*count })
 
-
-
-
+      console.log(elm);
     }
+
   })
 
-labelPrice.forEach(function(obj){
-  if (obj.amount>0) {
-    console.log(obj);
-  }
-
-})
-
-  //console.log(labelPrice);
 }
 
 // SHOW INFO ON HOVER
-function infolabelHover(ev) {
-
+function infolabel(ev) {
   let drawnShapes = canArr[0].drawnShapes
 
   for (let i = 0; i < drawnShapes.length; i++) {
@@ -173,8 +151,8 @@ function infolabelHover(ev) {
         shape.div.classList.add('active')
       }
       document.getElementById('label').querySelector('p').innerHTML = shape.label;
-      document.getElementById('label').classList.add('active')
-      canArr[0].canvas.style.cursor = 'grab';
+      document.getElementById('label').style.display = 'block';
+      canArr[0].canvas.style.cursor = 'pointer';
       return
 
     } else {
@@ -183,7 +161,7 @@ function infolabelHover(ev) {
       })
       canArr[0].canvas.style.cursor = 'default';
       document.getElementById('label').querySelector('p').innerHTML = "";
-      document.getElementById('label').classList.remove('active')
+      document.getElementById('label').style.display = 'none';
 
     }
   }
@@ -197,8 +175,6 @@ function infolabelHover(ev) {
 
 
 function makeActive(shapeDiv, shapeObj, canvasObj, hoverFunc) {
-canArr[0].canvas.removeEventListener('mousemove', infolabelHover)
-
 
   // TRUE IF ALREADY ACTIVE
   let isActive = shapeDiv.classList.contains('active');
@@ -219,7 +195,7 @@ canArr[0].canvas.removeEventListener('mousemove', infolabelHover)
     shapeDiv.classList.add('active')
 
     // MAKE SHAPEOBJ ACTIVE
-    shapeObj.active = true
+    shapeObj.active = 'true'
 
     // MAKE SHAPE ON MOUSE HOVER ON CANVAS
     canvasObj.canvas.addEventListener('mousemove', hovershape)
@@ -227,35 +203,7 @@ canArr[0].canvas.removeEventListener('mousemove', infolabelHover)
 
 
 
-  let reset2 = function(e) {
-  //  shape.active = true;
-let isKey = e instanceof KeyboardEvent;
-  if (isKey && e.keyCode == 69) {
-  canArr[0].redraw();
-  removeActive()
-  infolabelHover(e)
-  canArr[0].canvas.style.cursor = 'default';
-  canArr[0].canvas.removeEventListener('mousemove', hovershape)
-  document.removeEventListener("keydown",reset2);
 
-}
-
-else if (!isKey) {
-
-    canArr[0].redraw();
-    removeActive()
-    infolabelHover(e)
-    canArr[0].canvas.style.cursor = 'default';
-    canArr[0].canvas.removeEventListener('mousemove', hovershape)
-    canArr[0].canvas.removeEventListener('mouseout', reset2)
-    }
-    canArr[0].canvas.addEventListener('mousemove', infolabelHover)
-
-    canArr[0].canvas.addEventListener('mousedown', hittest)
-
-  }
-      canArr[0].canvas.addEventListener('mouseout', reset2)
-      document.addEventListener("keydown",reset2)
 
 }
 
@@ -282,17 +230,9 @@ function removeActive() {
 ///////////////////
 
 function hovershape(ev) {
-  canArr[0].canvas.removeEventListener('mousemove', infolabelHover)
-
-
-  canArr[0].canvas.style.cursor = 'grabbing';
+  canArr[0].canvas.style.cursor = 'grab';
   canArr[0].allShapes.forEach(function(shape) {
     if (shape.active) {
-      if (shape.type==='rectangle'){
-        document.getElementById('label').querySelector('p').innerHTML = 'press SPACE to rotate or E to remove';
-        document.getElementById('label').classList.add('active')
-      };
-
       //CLEAR CANVAS
       if (shape.div) {
         shape.div.classList.add('active')
@@ -324,7 +264,13 @@ function hovershape(ev) {
       /// COLLISION TEST....
 
 
-
+            if(!collision()){
+              shape.color = 'orange';
+              shape.canAdd = true;
+            } else {
+              shape.color = 'red';
+              shape.canAdd = false;
+            }
 
 
       shape.x = xyArr[0]
@@ -334,16 +280,8 @@ function hovershape(ev) {
       if (shape.type === "circle") {
         shape.setRotate();
       }
-      if(!collision()){
-        shape.color = 'orange';
-        shape.canAdd = true;
-        shape.draw()
-      } else {
-        shape.color = 'red';
-        shape.canAdd = false;
-        shape.draw('#ff00009e')
-      }
-console.log('hovershape');
+
+      shape.draw()
 
     }
   })
@@ -375,13 +313,10 @@ function rotateSpace(ev) {
 
 
 function addShape(e) {
-  canArr[0].canvas.style.cursor = 'grab';
-  //canArr[0].canvas.style.cursor = 'default';
-  canArr[0].canvas.addEventListener('mousemove', infolabelHover)
   canArr[0].canvas.removeEventListener('click', addShape)
 
-  document.getElementById('label').querySelector('p').innerHTML = '';
-  document.getElementById('label').classList.remove('active');
+
+
 
 
   //PUSH ACTIVE SHAPES FROM ALLSHAPES TO DRAWN SHAPES ARRAY
@@ -400,7 +335,7 @@ function addShape(e) {
           //dShape.canAdd = true;
           canArr[0].redraw();
           removeActive()
-          infolabelHover(e)
+          infolabel(e)
           canArr[0].canvas.style.cursor = 'default';
           canArr[0].canvas.removeEventListener('mousemove', hovershape)
         })
@@ -429,14 +364,12 @@ function addShape(e) {
 
       } else {
         addNewShape = Object.create(Rectangle)
-        addNewShape.init(shape.id, shape.ctx, shape.x, shape.y, shape.width, shape.height, shape.depth, shape.div, shape.rotate, "green", shape.label, shape.placement,shape.price)
+        addNewShape.init(shape.id, shape.ctx, shape.x, shape.y, shape.width, shape.height, shape.depth, shape.div, shape.rotate, "green", shape.label, shape.placement)
         addNewShape.active = true;
         x = shape.x;
         y = shape.y;
         width = shape.width;
-
       }
-
 
       canArr[0].drawnShapes.push(addNewShape)
     }
@@ -747,7 +680,7 @@ let hittest = function(ev) {
       cx.closePath()
     }
 
-    let bb = canArr[0].canvas.getBoundingClientRect(); // canvas size and pos
+    let bb = this.getBoundingClientRect(); // canvas size and pos
     // mouse to canvas coordinates
     let x = (ev.clientX - bb.left) * (this.width / bb.width);
     let y = (ev.clientY - bb.top) * (this.height / bb.height);
@@ -782,42 +715,24 @@ let hittest = function(ev) {
 
 
       canArr[0].canvas.addEventListener('mousemove', hovershape)
-      hovershape(ev)
 
       let reset = function(e) {
         shape.active = true;
         canArr[0].redraw();
         removeActive()
-        infolabelHover(e)
+        infolabel(e)
         canArr[0].canvas.style.cursor = 'default';
         canArr[0].canvas.removeEventListener('mousemove', hovershape)
 
       }
-          canArr[0].canvas.addEventListener('mouseout', reset)
-      let remove = function(e) {
-        if (shape.type==="circle") {
-          return
-        }
-        if (e.keyCode == 69) {
-        canArr[0].redraw();
-        removeActive()
-        infolabelHover(e)
-        canArr[0].canvas.style.cursor = 'default';
-        canArr[0].canvas.removeEventListener('mousemove', hovershape)
-        document.removeEventListener("keydown",remove)
-        }
-
-      }
-
-      document.addEventListener("keydown",remove)
+      canArr[0].canvas.addEventListener('mouseout', reset)
 
 
-
-
+    }
 
     canArr[0].canvas.addEventListener('mousedown', hittest)
-return
-}
+
+
   }
 }
 
@@ -831,24 +746,8 @@ function collision() {
   let corners = [];
   let grabbedCorners = []
 
-  let drawnWallOrFloorShapes = [];
-
-// GET ACTIVE SHAPE AND CHECK IF FLOOR OR WALL, and add to array
-  for (let shape of canArr[0].allShapes) {
-    if (shape.active == true) {
-
-        canArr[0].drawnShapes.forEach(function(dShape){
-          if (dShape.placement == shape.placement || dShape.type == 'circle') {
-            drawnWallOrFloorShapes.push(dShape);
-          }
-        })
-
-
-    }
-  }
-
   /// GET CORNERS OF ACTIVE DRAWN SHAPES
-  for (let shape of drawnWallOrFloorShapes) {
+  for (let shape of canArr[0].drawnShapes) {
 
     //if (shape.type!=='circle') {
 
@@ -1046,7 +945,7 @@ function collision() {
   }
 
   /// CHECK IF OWN CORNERS ARE INSIDE OF OTHERS
-  for (let shape of drawnWallOrFloorShapes) {
+  for (let shape of canArr[0].drawnShapes) {
 
     //if (shape.type!=='circle') {
 
