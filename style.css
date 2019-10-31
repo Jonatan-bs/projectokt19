@@ -1,9 +1,105 @@
+body {
+  margin: 0;
+  font-family: 'Overpass', sans-serif;
+}
+
+@import url('https://fonts.googleapis.com/css?family=Overpass&display=swap');
+
+
+@font-face {
+  font-family: Bebas;
+  src: url(font/BebasNeue-Regular.ttf);
+}
+
+
+header {
+  background: #000;
+  padding: 50px;
+  text-align: center;
+  background: url(https://images.squarespace-cdn.com/content/v1/5a0920a4ccc5c5849eab0709/1558661409673-47LD1SPFNPWTYHEFPCBO/ke17ZwdGBToddI8pDm48kHXUfA0Y0MM6kvaJd4_LQ9V7gQa3H78H3Y0txjaiv_0fDoOvxcdMmMKkDsyUqMSsMWxHk725yiiHCCLfrh8O1z5QPOohDIaIeljMHgDF5CVlOqpeNLcJ80NK65_fV7S1UbvFyj9wmxId-rfJtxtzIYkhw7--v5GkMRcTenWqfI2d_7k-9-XsFQ9lvpTgv0wwCA/Martina+Gemmolas+Terrazzo+Cantilever+K2+Kitchen2.jpg?format=1500w);
+  height: 400px;
+  background-size: cover;
+  background-position: 0px -200px;
+}
+
+header img {
+  width: 225px;
+}
+
+h1 {
+  font-family: Bebas, sans-serif;
+  color: #000;
+  text-shadow: 0px 0px 1px #fff;
+  margin: 0;
+  font-size: 25px;
+}
+
+h2 {
+  font-family: Bebas, sans-serif;
+  color: #000;
+  text-align: center;
+  font-size: 30px;
+}
+
+a {
+  text-decoration: none;
+  color: #000;
+}
+
+button {
+  border: none;
+  padding: 10px;
+  background: rgba(221, 123, 53, 0.8);
+  font-family: 'Overpass', sans-serif;
+  text-transform: uppercase;
+  font-size: 14px;
+}
+
+button:hover {
+  background: rgba(221, 123, 53, 1);
+  cursor: pointer;
+}
+
+.infoboxes {
+  width: 900px;
+  display: flex;
+  justify-content: space-between;
+  margin: 0 auto;
+}
+
+.infobox {
+  width: 425px;
+  margin-bottom: 50px;
+}
+
+.buttonplacement {
+  width: 900px;
+  margin: 0 auto;
+  margin-bottom: 50px;
+  text-align: center;
+}
+
+.showplanner {
+  width: 340px;
+  font-size: 16px;
+  padding: 20px;
+}
+
 .wrapper {
-    max-width: 500px;
+    width: 620px;
     display: block;
-    margin: 0 auto;
+
     position: relative;
 }
+
+.wrapperflex {
+  display: none;
+  justify-content: space-between;
+  flex-direction: row;
+  width: 900px;
+  margin: 0 auto;
+}
+
 #label p {
     padding: 0;
     margin: 0;
@@ -16,6 +112,31 @@
   padding: 1px 6px;
   color: #fff;
   display: none;
+}
+
+.wrapper label {
+  font-size: 16px;
+  display: block;
+  width: 240px;
+}
+
+.inputstyle {
+  width: 240px;
+
+}
+
+.inputstyle input {
+  margin-bottom: 10px;
+  font-family: 'Overpass', sans-serif;
+  width: 220px;
+  border: none;
+  outline: 1px solid black;
+  padding: 10px;
+}
+
+.inputstyle button {
+  margin-bottom: 10px;
+  width: 240px;
 }
 
 canvas{
@@ -32,9 +153,11 @@ canvas{
     background-size: cover;
 }
 .shape.active{
-  outline: 5px solid #00f;
+  outline: 5px solid rgba(221, 123, 53, 0.8);;
   outline-offset: -4px;
 }
+
+
 .flexWrap{
   display: flex;
   padding: 0;
