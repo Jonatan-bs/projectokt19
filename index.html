@@ -8,23 +8,42 @@
 
 <body>
   <header>
+    <img src="img/IBAKitchen.png" />
+    <h1>3D Print dit eget køkken</h1>
   </header>
   <section>
     <div class="slider">
       </div>
   </section>
   <section>
-  <div class="infoboxes">
+    <div class="infoboxes">
+      <div class="infobox">
+        <h2>Har du brug for et nyt køkken?</h2>
+        <p>Tilføj tekst her...</p>
+      </div>
+      <div class="infobox">
+        <h2>3D Print er den nyeste mode</h2>
+        <p>Tilføj tekst her...</p>
+      </div>
+    </div>
+    <div class="buttonplacement">
+      <a href="#wrapper"><button id="show" class="showplanner" onclick="document.getElementById('wrapper').style.display='flex'">Gå til vores køkkendesigner</button></a>
     </div>
     </section>
-    <section class="kitchenplanner">
-      <button id="show" class="showplanner">Gå til vores køkkendesigner</button>
-      <div class="wrapper">
-        <label>Length (meter)</label><input type="number" min="1" id="canLength" value="4">
-        <label>Width (meter)</label><input type="number" min="1" id="canWidth" value="5">
-        <button id="reset"> Clear and resize kitchen</button>
 
-    <ul class="flexWrap">
+    <section class="kitchenplanner">
+      <div class="wrapperflex" id="wrapper">
+        <div class="inputstyle">
+          <label>Længde (meter)</label><input type="number" min="1" id="canLength" value="4"><br/>
+          <label>Bredde (meter)</label><input type="number" min="1" id="canWidth" value="5"><br/>
+          <button id="reset">Nulstil med nye mål</button>
+          <button id="orderInfo">Få ordre information</button>
+        </div>
+    <div class="wrapper">
+
+
+
+      <ul class="flexWrap">
       <li>
         <div class="shape" id="cabinet1" data-placement="wall" data-label="Small Cabinet" data-width="40" data-height="70" data-depth="60" data-price="200">
         </div>
@@ -38,6 +57,7 @@
         </div>
       </li>
     </ul>
+
     <div style="position:relative">
 
           <canvas id="kitchen" width="500" height="400">
@@ -45,7 +65,7 @@
           </canvas>
 
         </div>
-        <button id="orderInfo"> Get order information</button>
+
       </div>
       <div id="label">
         <p></p>
@@ -53,6 +73,7 @@
 
       <div id="orderinfo">
       <p></p>
+      </div>
       </div>
     </section>
   <footer>

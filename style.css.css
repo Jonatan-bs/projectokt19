@@ -40,11 +40,9 @@ canvas{
   padding: 0;
   margin: 0;
 }
-<<<<<<< HEAD
-ul.flexWrap>li {
-=======
+
 ul.flexWrap li {
->>>>>>> d62b22bcd21d02a253ec3f714efc82a3cf747f03
+
     list-style: none;
     width: 100%;
     padding: 0;
