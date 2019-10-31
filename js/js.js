@@ -858,11 +858,31 @@ function collision() {
   for (let shape of canArr[0].allShapes) {
     if (shape.active == true) {
 
-        canArr[0].drawnShapes.forEach(function(dShape){
-          if (dShape.placement == shape.placement || dShape.type == 'circle') {
-            drawnWallOrFloorShapes.push(dShape);
+let circleClicked = false;
+
+      canArr[0].drawnShapes.forEach(function(dShape){
+        if (dShape.type=='circle' && !dShape.active) {
+            circleClicked = true;
           }
-        })
+      })
+
+if (circleClicked) {
+
+  canArr[0].drawnShapes.forEach(function(dShape){
+      drawnWallOrFloorShapes.push(dShape);
+
+  })
+
+} else {
+
+  canArr[0].drawnShapes.forEach(function(dShape){
+    if (dShape.placement == shape.placement || dShape.type == 'circle') {
+      drawnWallOrFloorShapes.push(dShape);
+    }
+  })
+
+}
+
 
 
     }
@@ -870,6 +890,7 @@ function collision() {
 
   /// GET CORNERS OF ACTIVE DRAWN SHAPES
   for (let shape of drawnWallOrFloorShapes) {
+
 
     //if (shape.type!=='circle') {
 
@@ -901,7 +922,6 @@ function collision() {
         cx.closePath()
 
       } else if (shape.type === "circle") {
-
         let extra = shape.radius * Math.cos(Math.PI / 180 * 70)
 
         if (shape.rotate === 1) {
@@ -1162,6 +1182,5 @@ function collision() {
   }
 
 return false
-
 
 }
