@@ -165,7 +165,7 @@ canvas{
     background-size: cover;
 }
 .shape.active{
-  outline: 5px solid rgba(221, 123, 53, 0.8);;
+  outline: 5px solid rgba(221, 123, 53, 0.8);
   outline-offset: -4px;
 }
 
@@ -180,6 +180,24 @@ ul.flexWrap li {
     width: 100%;
     padding: 0;
     margin: 0;
+}
+
+p.label {
+  text-transform: capitalize;
+  margin: 0;
+  font-weight: 700;
+}
+
+p.amount {
+  margin: 0;
+  border-bottom: 1px solid rgba(221, 123, 53, 0.8);
+  margin-bottom: 5px;
+}
+
+p.totalPrice {
+  margin: 0;
+  margin-bottom: 10px;
+  border-bottom: 1px solid rgba(221, 123, 53, 0.8);
 }
 
 #cabinet1{
